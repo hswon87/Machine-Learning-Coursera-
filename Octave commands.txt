@@ -1,0 +1,145 @@
+Octave tutorial 정리
+
+1> 변수다루기
+1 == 2   % false
+1 ~=2    % true (다른 프로그램에서의 !와 같은 부정표현)
+1 && 0   % and
+1 || 0      % or
+xor(1,0)   % or
+PS1('>> ')  % 기본프롬프트변경
+a = 3     % 변수정의
+a = 3;     % semicolon suppressing output
+b = 'hi';
+disp(a);   % 'a =' 이 뜨지 않는 출력법
+a = pi, disp(sprintf('2 decimals: %0.2f', a))  % '2 decimals: a의 소수점2자리' 출력
+         disp(sprintf('6 decimals: %0.6f', a))  % '6 decimals: a의 소수점6자리' 출력
+format long   % 소수점을 많이 출력
+format short  % 원래표현대로 돌아감
+
+
+2>벡터와 행렬
+A = [1 2; 3 4; 5 6]    % semicolon changes the rows
+sz = size(A)                  % 3   2
+size(sz)		% 1   2
+A(3, 2)		% 6
+A(2, :)		% : colon means every elements
+A([1 3], :)		% 1 2 5 6, extract all elements in 1st and 3rd rows
+A(:,2) = [10; 11; 12] 	% replace 2nd column
+A = [A, [100; 101; 102]]	% add another colunm to right
+A(:)		% put all elements of A into a single vector
+C = [A B]		% column bind
+C = [A; B]	% row bind
+v = [1 2 3]        % 1 x 3 vector
+length(v)          % 4
+v = [1; 2; 3]       % 3 x 1 vector
+v = 1:0.1:2         % 1부터 2까지 0.1씩 증가하는 elements, 1 x 11 vector
+v = 1:6         % 1부터 6까지 integer
+ones(2, 3)      % 모든 elements가 1인 2 x 3 matrix
+2 * ones(2, 3) % 모든 elements가 2
+zeros(1, 3)
+rand(1, 3)      % 0에서 1사이의 무작위 추출된 1 x 3 matrix
+randn(1, 3)     % mean = 0, sd = 1인 가우스분포 무작위 추출
+w = -6 + sqrt(10) * (randn(1, 10000));
+hist(w)
+hist(w, 50)        % bandwidth를 조절
+I = eye(4)       % 4 x 4 identical matrix
+help eye, help randn        % 도움말
+
+
+
+3> 기본명령
+pwd		% current working directory
+cd 'C:\Users\Han S\Desktop\Han S\Coursera\machine learning'	% change directory
+ls		% list files
+load featuresX.dat, load('featuresX.dat')	% load files "featuresX.dat"
+who		% 현재 workspace에 있는 변수를 보여줌
+whos		% 상세보기
+clear featuresX	% 변수삭제
+clear 		% 모든변수삭제
+v = featuresX(1:10)	% featuresX의 처음부터 10개의 elements 추출
+save hello.mat v;	% hello.mat에 변수 v를 저장, mat은 압축된 형식
+save hello.txt v -ascii	% save as text (ASCII) : 사람이 읽을수있는
+
+
+4> 계산
+A .* B 		
+A .^ 2		
+1 ./ A		% .은 matrix내 element간의 계산 
+log(A), exp(A), abs(A), -A
+A'		% transpose matrix
+pinv(A)		% pseudo-inverse
+
+v = [1; 2; 3] 
+v + ones(length(v), 1)	% 2, 3, 4
+v + 1			% 2, 3, 4
+max([1 2 3])			% 3
+[max(v), ind] = max(v)		% max값의 위치도 반환한다
+max(A)			% column 단위로 max값을 계산
+v < 3			% logical 값을 반환
+find(v < 3)		% true인 값의 위치
+
+A = magic(3)			% magic squares 마방진 ( 행, 열, 대각선의 합이 모두 같다)
+[r, c] = find(A >= 7)		% r = row , c = col
+max(A, [], 1)			% 1 => column 별로 최대값을 구함
+max(A, [], 2)			% row level maximum
+max(A)				% default는 column별로 구하는것
+max(max(A), max(A:)		% 최대값 1개를 구할수있다.
+sum(A, 1), sum(A, 2)		% column, row끼리 합
+sum(sum(A.*eye(3)))		% 대각선의 합, 항등행렬의 곱을 이용하여 대각선 외 모두 0으로 만든 후 합
+sum(sum(A.*flipud(eye(3))))		% flipud: 반대로 뒤집음. 반대쪽 대각선의 합
+a = [1 15 2 0.5]
+sum(a)			% sum
+prod(a)			% multiply
+floor(a)			% 버림	
+ceil(a)			% 올림
+
+
+5> Plotting
+% Plot sin curve
+t = [0:0.01:0.98];
+y1 = sin(2*pi*4*t);
+plot(t, y1)
+
+hold on;			% 기존 그래프 위에 그려라
+y2 = cos(2*pi*4*t);
+plot(t, y2, 'r')		% red color
+xlabel('time')
+ylabel('value')
+legend('sin', 'cos')
+title('my plot')
+cd 'C:\Users\Han S\Desktop\Han S'; print -dpng 'myplot.png'		% 이미지 저장
+axis([0..5 1 -1 1])		% set x and y ranges	
+figure(1); plot(t, y1);
+figure(2); plot(t, y2);		% 2개의 figure가 나온다
+
+subplot(1,2,1); plot(t, y1);			% Divides plot a 1x2 grid, access first element
+
+subplot(1,2,2); plot(t, y2);			% Divides plot a 1x2 grid, access second element
+
+
+clf			% clear figure	
+A = magic(5), imagesc(A), colorbar, colormap gray		% color bar를 그리고 색상을 지정해줌, ,는 순서대로 실행
+
+
+6> Control statements
+for i=1:10,
+> v(i) = 2^i;
+> end;		%       2      4      8     16     32     64    128    256    512   1024
+
+i = 1;
+while i <= 5
+> v(i) = 100;
+> i = i+1;
+> end;		%    100    100    100    100    100     64    128    256    512   1024 (1-5까지를 100으로 바꾼다.)
+
+if v(1) == 1,
+> disp('The value is one')
+> elseif v(1) == 2,
+> disp('The value is two')
+> else
+> disp('The value is not one or two.')
+> end;
+
+squareThisNumber.m에 저장된 squareThisNumber(x) 라는 함수를 불러보자
+1> cd 'C:\Users\Han S\Desktop'		% 파일이있는 디렉토리로 이동한 후 실행
+2> addpath('C:\Users\Han S\Desktop')	% 파일있는 디렉토리를 경로에 추가
